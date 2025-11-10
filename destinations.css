@@ -1,4 +1,3 @@
-/* --- Base Styles & General Theme --- */
 
 body {
     background: linear-gradient(to bottom, #0a0a18, #1a1a2e, #16213e);
@@ -8,7 +7,6 @@ body {
     color: white;
 }
  
-/* Stars Background */
 .star {
     position: absolute;
     background-color: white;
@@ -30,7 +28,6 @@ body {
     font-family: 'Orbitron', sans-serif; 
 }
 
-/* --- Navigation & Links --- */
 
 .nav-link {
     position: relative;
@@ -52,7 +49,6 @@ body {
     width: 100%;
 }
 
-/* --- Form & Buttons --- */
 
 .btn-primary {
     background: linear-gradient(to right, #0ea5e9, #8b5cf6);
@@ -85,7 +81,6 @@ body {
     outline: none;
 }
 
-/* --- Mobile Menu Fix --- */
 
 .mobile-menu {
     transition: all 0.3s ease;
@@ -100,5 +95,5 @@ body {
 }
 
 .mobile-menu.open {
-    max-height: 600px; /* Max-height ssaḥiḥ bach ykoun Logout visible */
+    max-height: 600px; 
 }
