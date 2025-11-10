@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking - SpaceVoyager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css"> 
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'space-dark': '#0a0a18',
+                        'space-blue': '#1a1a2e',
+                        'space-purple': '#16213e',
+                        'neon-blue': '#0ea5e9',
+                        'neon-purple': '#8b5cf6',
+                        'neon-cyan': '#06b6d4',
+                    },
+                    fontFamily: {
+                        'orbitron': ['Orbitron', 'sans-serif'],
+                        'exo': ['Exo 2', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="myBooking.css">
+</head>
+<body class="text-white font-exo min-h-screen">
+    <div id="stars-container"></div>
+    
+    
+    <!-- nav-bar -->
+
+        <nav class="bg-space-dark/80 backdrop-blur-md border-b border-neon-blue/20 sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-r from-neon-blue to-neon-purple flex items-center justify-center glow">
+                    <i class="fas fa-rocket text-white"></i>
+                </div>
+                <a href="index.html" class="font-orbitron text-xl font-bold text-glow">SpaceVoyager</a>
+            </div>
+            
+            <div class="hidden md:flex space-x-8 items-center">
+                <a href="index.html" class="nav-link hover:text-neon-blue transition-colors">Home</a>
+                <a href="destinations.html" class="nav-link hover:text-neon-blue transition-colors">Destinations</a>
+                <a href="booking.html" class="nav-link hover:text-neon-blue transition-colors">Booking</a>
+                <a href="myBooking.html" class="nav-link hover:text-neon-blue transition-colors">MyBooking</a>
+                <a href="about.html" class="nav-link hover:text-neon-blue transition-colors">About</a>
+
+                <div id="auth-links" class="flex items-center space-x-4">
+                    <a href="login.html" id="desktop-login-link" class="nav-link hover:text-neon-blue transition-colors text-neon-blue">Login</a>
+                    
+                    <div id="desktop-user-status" class="hidden items-center space-x-3">
+                        <span id="desktop-user-name" class="text-neon-blue font-semibold"></span> 
+                        <button id="desktop-logout-btn" class="bg-red-600 hover:bg-red-700 text-white px-5 py-1 rounded-full text-sm font-bold transition-colors">
+                            Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-white focus:outline-none">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div id="mobile-menu" class="mobile-menu bg-space-dark/90 backdrop-blur-md"> 
+            <div class="container mx-auto px-4 py-3 flex flex-col space-y-4">
+                <a href="index.html" class="hover:text-neon-blue transition-colors py-2 border-b border-neon-blue/20">Home</a>
+                <a href="destinations.html" class="hover:text-neon-blue transition-colors py-2 border-b border-neon-blue/20">Destinations</a>
+                <a href="booking.html" class="hover:text-neon-blue transition-colors py-2 border-b border-neon-blue/20">Booking</a>
+                <a href="myBooking.html" class="hover:text-neon-blue transition-colors py-2 border-b border-neon-blue/20">My Booking</a>
+                <a href="about.html" class="hover:text-neon-blue transition-colors py-2 border-b border-neon-blue/20">About</a>
+                
+                <a href="login.html" id="mobile-login-link" class="hover:text-neon-blue transition-colors py-2">Login</a>
+                
+                <div id="mobile-user-status" class="hidden flex flex-col space-y-2 pt-2 border-t border-neon-blue/20">
+                    <span id="mobile-user-name" class="text-neon-blue font-semibold"></span>
+                    <button id="mobile-logout-btn" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-full text-sm font-bold text-left transition-colors">
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- nav-bar -->
+
+
+    <main class="relative z-10 flex flex-col items-center mt-16 px-4">
+    <h2 class="text-4xl md:text-5xl font-bold text-blue-300 mb-3">Book Your Space Journey</h2>
+    <p class="text-gray-400 text-center max-w-xl mb-10">
+      Begin your adventure to the stars. Fill out the form below to reserve your spot on our next space voyage.
+    </p>
+
+    <!-- Booking Form -->
+    <form class="bg-black bg-opacity-40 border border-gray-700 rounded-2xl p-6 md:p-10 w-full max-w-2xl">
+      <h3 class="text-2xl font-semibold text-blue-300 mb-4">Journey Details</h3>
+
+      <label class="block mb-2">Destination</label>
+      <select class="w-full p-2 rounded bg-gray-800 border border-gray-700 mb-4">
+        <option>Select your destination</option>
+        <option>Mars</option>
+        <option>Moon</option>
+        <option>Jupiter Station</option>
+      </select>
+
+      <label class="block mb-2">Departure Date</label>
+      <input type="date" class="w-full p-2 rounded bg-gray-800 border border-gray-700 mb-4" />
+
+      <label class="block mb-2">Number of Passengers</label>
+      <div class="flex gap-4 mb-4">
+        <label><input type="radio" name="passengers" /> Solo Traveler</label>
+        <label><input type="radio" name="passengers" /> Couple (2)</label>
+        <label><input type="radio" name="passengers" /> Group (3-6)</label>
+      </div>
+
+      <!-- Accommodation -->
+      <label class="block mb-3">Accommodation Type</label>
+      <div id="accommodation-options" class="grid md:grid-cols-3 gap-4 mb-6">
+        <div class="option border border-gray-700 rounded-lg p-4 hover:border-blue-400 cursor-pointer">
+          <h4 class="text-blue-400 font-semibold">Standard Cabin</h4>
+          <p class="text-gray-400 text-sm">Comfortable private quarters with basic amenities.</p>
+        </div>
+        <div class="option border border-gray-700 rounded-lg p-4 hover:border-blue-400 cursor-pointer">
+          <h4 class="text-blue-400 font-semibold">Luxury Suite</h4>
+          <p class="text-gray-400 text-sm">Spacious suite with premium amenities and viewports.</p>
+        </div>
+        <div class="option border border-gray-700 rounded-lg p-4 hover:border-blue-400 cursor-pointer">
+          <h4 class="text-blue-400 font-semibold">Zero-G Pod</h4>
+          <p class="text-gray-400 text-sm">Advanced accommodation with zero-gravity experience.</p>
+        </div>
+      </div>
+
+      <!-- Hidden User Info Section -->
+      <div id="user-info" class="hidden border-t border-gray-700 pt-6">
+        <h3 class="text-2xl font-semibold text-blue-300 mb-4">Passenger Information</h3>
+
+        <label class="block mb-2">Full Name</label>
+        <input type="text" placeholder="Enter your full name" class="w-full p-2 rounded bg-gray-800 border border-gray-700 mb-4">
+
+        <label class="block mb-2">Email Address</label>
+        <input type="email" placeholder="Enter your email" class="w-full p-2 rounded bg-gray-800 border border-gray-700 mb-4">
+
+        <label class="block mb-2">Additional Notes</label>
+        <textarea placeholder="Any special requests?" class="w-full p-2 rounded bg-gray-800 border border-gray-700 mb-6"></textarea>
+
+        <button type="button" id="book-btn" class="bg-blue-500 hover:bg-blue-600 w-full py-2 rounded-lg text-white font-semibold">
+          Confirm Booking
+        </button>
+      </div>
+    </form>
+  </main>
+
+    <footer class="bg-space-dark border-t border-neon-blue/20 py-8 mt-12 relative z-10">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <div class="flex items-center space-x-2 mb-2">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-r from-neon-blue to-neon-purple flex items-center justify-center">
+                            <i class="fas fa-rocket text-white text-sm"></i>
+                        </div>
+                        <span class="font-orbitron text-lg">SpaceVoyager</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">© 2023 SpaceVoyager. All rights reserved.</p>
+                </div>
+                
+                <div class="flex space-x-6 mb-4 md:mb-0">
+                    <a href="#" class="text-gray-400 hover:text-neon-blue transition-colors text-xl">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-neon-blue transition-colors text-xl">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-neon-blue transition-colors text-xl">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="myBooking.js"></script>
+</body>
+</html>
