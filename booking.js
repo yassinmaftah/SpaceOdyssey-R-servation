@@ -98,8 +98,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /*--------------------------------------------------------------------*/
-
-/*--------------------------------------------------------------------*/
 /* Upload data from destinations.json */
 
 function getData_destinations() {
@@ -249,6 +247,13 @@ function createPassengerForm() {
     <textarea placeholder="Any special requests?" class="w-full p-2 rounded bg-gray-900 border border-gray-700 mb-3"></textarea>
   `;
 
+  const inputs = formDiv.querySelectorAll("input");
+  inputs.forEach(input => {
+      input.addEventListener("keyup", function() {
+          validateInput(this);
+      });
+  });
+
   passengersContainer.appendChild(formDiv);
 }
 
@@ -256,5 +261,77 @@ function createPassengerForm() {
 
 add_option_select();
 
+/*functin check data All Forms*/
+function validateAllPassengers() {
+    const forms = passengersContainer.querySelectorAll("div");
+    let allValid = true;
+
+    forms.forEach((formDiv) => {
+        const inputs = formDiv.querySelectorAll("input, textarea");
+        inputs.forEach((input) => {
+            if (input.value.trim() === "") {
+                allValid = false;
+            }
+        });
+    });
+
+    return allValid;
+}
 
 
+const bookbtn = document.getElementById('book-btn'); 
+
+bookbtn.addEventListener('click', function(){
+    const isValid = validateAllPassengers();
+
+    if (isValid) {
+        console.log("All passenger forms are complete!");
+    } else {
+        alert("Please fill in all passenger information before proceeding!");
+    }
+});
+
+function validateInput(input) {
+    const value = input.value.trim();
+    const type = input.type;
+    let isValid = true;
+    let message = "";
+
+    if (type === "text") {
+        const nameRegex = /^[A-Za-z\s]+$/;
+        if (!nameRegex.test(value)) {
+            isValid = false;
+            message = "Please enter a valid name (letters only).";
+        }
+    }
+
+    if (type === "number") {
+        const phoneRegex = /^[0-9]{8,15}$/;
+        if (!phoneRegex.test(value)) {
+            isValid = false;
+            message = "Enter a valid phone number (8-15 digits).";
+        }
+    }
+
+    if (type === "email") {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) {
+            isValid = false;
+            message = "Enter a valid email address.";
+        }
+    }
+
+    let errorMsg = input.nextElementSibling;
+    if (errorMsg && errorMsg.classList.contains("error-msg")) {
+        errorMsg.remove();
+    }
+
+    if (!isValid) {
+        const msgEl = document.createElement("p");
+        msgEl.className = "error-msg text-red-500 text-sm mt-1";
+        msgEl.textContent = message;
+        input.insertAdjacentElement("afterend", msgEl);
+    }
+
+    return isValid;
+}
