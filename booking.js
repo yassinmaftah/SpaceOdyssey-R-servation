@@ -21,17 +21,6 @@ window.onload = function() {
   createStars();
 };
 
-const options = document.querySelectorAll('.option');
-const userInfo = document.getElementById('user-info');
-
-options.forEach(option => {
-  option.addEventListener('click', function() {
-    options.forEach(o => o.classList.remove('border-blue-400'));
-    this.classList.add('border-blue-400');
-    userInfo.classList.remove('hidden');
-    userInfo.scrollIntoView({ behavior: 'smooth' });
-  });
-});
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -107,4 +96,104 @@ document.addEventListener('DOMContentLoaded', () => {
         updateNavUI({ isLogged: false });
     }
 });
+
+/*--------------------------------------------------------------------*/
+
+/* uplaud data from destinations.json*/
+
+function getData_destinations()
+{
+    fetch("destinations.json")
+    .then((retuurn) => retuurn.json())
+    .then((data) => {
+        localStorage.setItem("destinanationsData", JSON.stringify(data));
+    })
+    .catch((error) => console.error("error", error));
+}
+getData_destinations();
+
+
+const Data = JSON.parse(localStorage.getItem("destinanationsData"));
+const AllData = Data.destinations;
+
+/* uplaud data from accommodations.json*/
+
+function getData_accommodations()
+{
+    fetch("accommodations.json")
+    .then((reply) => reply.json())
+    .then((data) => {
+        localStorage.setItem("accommodationsData", JSON.stringify(data));
+    })
+    .catch((error) => console.error("error", error));
+}
+
+getData_accommodations();
+
+const accommodations_Data = JSON.parse(localStorage.getItem("accommodationsData"));
+const Accommodations_Data = accommodations_Data.accommodations;
+
+/*--------------------------------------------------------------------*/
+
+
+const select = document.getElementById('options_select');
+const Acc_type = document.getElementById('accommodation-options');
+const userInfo = document.getElementById('user-info');
+
+function display_accommondations(destinationId)
+{
+    Acc_type.innerHTML = "";
+    for (card of Accommodations_Data)
+    {
+        if (card.availableOn.includes(destinationId))
+        {
+            Acc_type.innerHTML += 
+            `
+                <div class="option border border-gray-700 rounded-lg p-4 hover:border-blue-400 cursor-pointer">
+                    <h4 class="text-blue-400 font-semibold">${card.name}</h4>
+                    <p class="text-gray-400 text-sm">${card.shortDescription}</p>
+                </div>
+            `
+        }
+    }
+
+    const optioncards = document.querySelectorAll('.option');
+    optioncards.forEach(card => {
+        card.addEventListener('click', function(){
+            optioncards.forEach(c => c.classList.remove('border-blue-400'));
+            this.classList.add('border-blue-400');
+
+            userInfo.classList.remove('hidden');
+        });
+    });
+}
+
+
+function add_option_select()
+{
+    for(option_select of AllData)
+    {
+        select.innerHTML += `
+            <option value = "${option_select.id}">${option_select.name}</option>
+        `;
+    }
+}
+
+select.addEventListener('change' , function()
+{
+    
+    
+    
+    const value_choice = select.value;
+    console.log(value_choice);
+    display_accommondations(value_choice);
+})
+
+add_option_select();
+display_accommondations(AllData[0].id);
+
+
+
+
+
 
