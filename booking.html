@@ -106,11 +106,8 @@
       <h3 class="text-2xl font-semibold text-blue-300 mb-4">Journey Details</h3>
 
       <label class="block mb-2">Destination</label>
-      <select class="w-full p-2 rounded bg-gray-800 border border-gray-700 mb-4">
+      <select id="options_select" class="w-full p-2 rounded bg-gray-800 border border-gray-700 mb-4">
         <option>Select your destination</option>
-        <option>Mars</option>
-        <option>Moon</option>
-        <option>Jupiter Station</option>
       </select>
 
       <label class="block mb-2">Departure Date</label>
@@ -125,20 +122,7 @@
 
       <!-- Accommodation -->
       <label class="block mb-3">Accommodation Type</label>
-      <div id="accommodation-options" class="grid md:grid-cols-3 gap-4 mb-6">
-        <div class="option border border-gray-700 rounded-lg p-4 hover:border-blue-400 cursor-pointer">
-          <h4 class="text-blue-400 font-semibold">Standard Cabin</h4>
-          <p class="text-gray-400 text-sm">Comfortable private quarters with basic amenities.</p>
-        </div>
-        <div class="option border border-gray-700 rounded-lg p-4 hover:border-blue-400 cursor-pointer">
-          <h4 class="text-blue-400 font-semibold">Luxury Suite</h4>
-          <p class="text-gray-400 text-sm">Spacious suite with premium amenities and viewports.</p>
-        </div>
-        <div class="option border border-gray-700 rounded-lg p-4 hover:border-blue-400 cursor-pointer">
-          <h4 class="text-blue-400 font-semibold">Zero-G Pod</h4>
-          <p class="text-gray-400 text-sm">Advanced accommodation with zero-gravity experience.</p>
-        </div>
-      </div>
+      <div id="accommodation-options" class="grid md:grid-cols-3 gap-4 mb-6"></div>
 
       <!-- Hidden User Info Section -->
       <div id="user-info" class="hidden border-t border-gray-700 pt-6">
