@@ -97,57 +97,59 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-/*--------------------------------------------------------------------*/
-/* Upload data from destinations.json */
-
+/*--------------------------------------------*/
+/* Load Destinations Data */
 function getData_destinations() {
   fetch("destinations.json")
-    .then((res) => res.json())
-    .then((data) => {
+    .then(res => res.json())
+    .then(data => {
       localStorage.setItem("destinationsData", JSON.stringify(data));
     })
-    .catch((error) => console.error("Error loading destinations:", error));
+    .catch(error => console.error("Error loading destinations:", error));
 }
 getData_destinations();
 
 const Data = JSON.parse(localStorage.getItem("destinationsData"));
 const AllData = Data.destinations;
 
-/*--------------------------------------------------------------------*/
-/* Upload data from accommodations.json */
-
+/*--------------------------------------------*/
+/* Load Accommodations Data */
 function getData_accommodations() {
   fetch("accommodations.json")
-    .then((res) => res.json())
-    .then((data) => {
+    .then(res => res.json())
+    .then(data => {
       localStorage.setItem("accommodationsData", JSON.stringify(data));
     })
-    .catch((error) => console.error("Error loading accommodations:", error));
+    .catch(error => console.error("Error loading accommodations:", error));
 }
 getData_accommodations();
 
 const accommodations_Data = JSON.parse(localStorage.getItem("accommodationsData"));
 const Accommodations_Data = accommodations_Data.accommodations;
 
-/*--------------------------------------------------------------------*/
-
+/*--------------------------------------------*/
+/* VARIABLES */
 const select = document.getElementById("options_select");
 const Acc_type = document.getElementById("accommodation-options");
 const userInfo = document.getElementById("user-info");
 const addBtn = document.getElementById("Add-btn");
+const Total_price = document.getElementById('price-value');
 const passengersContainer = document.createElement("div");
 userInfo.insertBefore(passengersContainer, addBtn);
 
-let passengerCount = 0;
-
-/*--------------------------------------------------------------------*/
-/* Display accommodations */
-
+let selectedDestinationId = null;
 let selectedAccommodationId = null;
+let destinationPrice = 0;
+let accommodationPrice = 0;
+let countOfDay = 1;
+let passengerCount = 0;
+let passengerMultiplier = 1;
 
+/*--------------------------------------------*/
+/* Display Accommodations */
 function display_accommondations(destinationId) {
   Acc_type.innerHTML = "";
-  
+
   for (let card of Accommodations_Data) {
     if (card.availableOn.includes(destinationId)) {
       Acc_type.innerHTML += `
@@ -159,38 +161,53 @@ function display_accommondations(destinationId) {
     }
   }
 
-  const optioncards = document.querySelectorAll('.option');
+  const optioncards = document.querySelectorAll(".option");
   optioncards.forEach(card => {
-    card.addEventListener('click', function() {
-      optioncards.forEach(c => c.classList.remove('border-blue-400'));
-      this.classList.add('border-blue-400');
+    card.addEventListener("click", function () {
+      optioncards.forEach(c => c.classList.remove("border-blue-400"));
+      this.classList.add("border-blue-400");
       selectedAccommodationId = this.dataset.id;
 
-      userInfo.classList.remove('hidden');
+      const selectedAcc = Accommodations_Data.find(acc => acc.id === selectedAccommodationId);
+      accommodationPrice = selectedAcc ? selectedAcc.pricePerDay : 0;
+
+      userInfo.classList.remove("hidden");
+      updateTotalPrice();
     });
   });
 }
 
-/*--------------------------------------------------------------------*/
+/*--------------------------------------------*/
 function add_option_select() {
   for (let option_select of AllData) {
-    select.innerHTML += `
-      <option value="${option_select.id}">${option_select.name}</option>
-    `;
+    select.innerHTML += `<option value="${option_select.id}">${option_select.name}</option>`;
   }
 }
+add_option_select();
 
+/*--------------------------------------------*/
 select.addEventListener("change", function () {
-  const value_choice = select.value;
-  display_accommondations(value_choice);
+  selectedDestinationId = select.value;
+
+  const destination = AllData.find(dest => dest.id === selectedDestinationId);
+
+  if (destination) {
+    destinationPrice = destination.price;
+    countOfDay = destination.countOfDay || 1;
+  } else {
+    destinationPrice = 0;
+    countOfDay = 1;
+  }
+
+  display_accommondations(selectedDestinationId);
+  updateTotalPrice();
 });
 
-/*--------------------------------------------------------------------*/
-/* Passengers Logic */
-
+/*--------------------------------------------*/
+/* Passenger Type Logic */
 const passengerRadios = document.querySelectorAll('input[name="passengers"]');
 
-passengerRadios.forEach((radio) => {
+passengerRadios.forEach(radio => {
   radio.addEventListener("change", () => {
     const selected = document.querySelector('input[name="passengers"]:checked');
     userInfo.classList.remove("hidden");
@@ -199,34 +216,40 @@ passengerRadios.forEach((radio) => {
     addBtn.classList.add("hidden");
 
     if (selected.value === "solo") {
+      passengerMultiplier = 1;
       createPassengerForm();
     } else if (selected.value === "couple") {
+      passengerMultiplier = 2;
       createPassengerForm();
       createPassengerForm();
     } else if (selected.value === "group") {
+      passengerMultiplier = 3;
       createPassengerForm();
       createPassengerForm();
       createPassengerForm();
       addBtn.classList.remove("hidden");
     }
+
+    updateTotalPrice();
   });
 });
 
-/*--------------------------------------------------------------------*/
-/* Add Passenger Button Logic */
-
+/*--------------------------------------------*/
+/* Add Passenger Button */
 addBtn.addEventListener("click", () => {
   if (passengerCount < 6) {
+    passengerCount++;
+    passengerMultiplier = passengerCount;
     createPassengerForm();
+    updateTotalPrice();
   }
   if (passengerCount === 6) {
     addBtn.classList.add("hidden");
   }
 });
 
-/*--------------------------------------------------------------------*/
+/*--------------------------------------------*/
 /* Create Passenger Form */
-
 function createPassengerForm() {
   passengerCount++;
   const formDiv = document.createElement("div");
@@ -249,89 +272,104 @@ function createPassengerForm() {
 
   const inputs = formDiv.querySelectorAll("input");
   inputs.forEach(input => {
-      input.addEventListener("keyup", function() {
-          validateInput(this);
-      });
+    input.addEventListener("keyup", function () {
+      validateInput(this);
+    });
   });
 
   passengersContainer.appendChild(formDiv);
 }
 
-/*--------------------------------------------------------------------*/
-
-add_option_select();
-
-/*functin check data All Forms*/
+/*--------------------------------------------*/
+/* Validate All Passenger Forms */
 function validateAllPassengers() {
-    const forms = passengersContainer.querySelectorAll("div");
-    let allValid = true;
+  const forms = passengersContainer.querySelectorAll("div");
+  let allValid = true;
 
-    forms.forEach((formDiv) => {
-        const inputs = formDiv.querySelectorAll("input, textarea");
-        inputs.forEach((input) => {
-            if (input.value.trim() === "") {
-                allValid = false;
-            }
-        });
+  forms.forEach(formDiv => {
+    const inputs = formDiv.querySelectorAll("input, textarea");
+    inputs.forEach(input => {
+      if (input.value.trim() === "") {
+        allValid = false;
+      }
     });
+  });
 
-    return allValid;
+  return allValid;
 }
 
+/*--------------------------------------------*/
+/* Book Button */
 
-const bookbtn = document.getElementById('book-btn'); 
+const bookbtn = document.getElementById("book-btn");
 
-bookbtn.addEventListener('click', function(){
-    const isValid = validateAllPassengers();
 
-    if (isValid) {
-        console.log("All passenger forms are complete!");
-    } else {
-        alert("Please fill in all passenger information before proceeding!");
-    }
+
+bookbtn.addEventListener("click", function () {
+  const isValid = validateAllPassengers();
+
+  if (isValid) {
+    console.log("✅ All passenger forms are complete!");
+  } else {
+    alert("⚠️ Please fill in all passenger information before proceeding!");
+  }
 });
 
+/*--------------------------------------------*/
+/* Input Validation */
 function validateInput(input) {
-    const value = input.value.trim();
-    const type = input.type;
-    let isValid = true;
-    let message = "";
+  const value = input.value.trim();
+  const type = input.type;
+  let isValid = true;
+  let message = "";
 
-    if (type === "text") {
-        const nameRegex = /^[A-Za-z\s]+$/;
-        if (!nameRegex.test(value)) {
-            isValid = false;
-            message = "Please enter a valid name (letters only).";
-        }
+  if (type === "text") {
+    const nameRegex = /^[A-Za-z\s]+$/;
+    if (!nameRegex.test(value)) {
+      isValid = false;
+      message = "Please enter a valid name (letters only).";
     }
+  }
 
-    if (type === "number") {
-        const phoneRegex = /^[0-9]{8,15}$/;
-        if (!phoneRegex.test(value)) {
-            isValid = false;
-            message = "Enter a valid phone number (8-15 digits).";
-        }
+  if (type === "number") {
+    const phoneRegex = /^[0-9]{8,15}$/;
+    if (!phoneRegex.test(value)) {
+      isValid = false;
+      message = "Enter a valid phone number (8-15 digits).";
     }
+  }
 
-    if (type === "email") {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(value)) {
-            isValid = false;
-            message = "Enter a valid email address.";
-        }
+  if (type === "email") {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(value)) {
+      isValid = false;
+      message = "Enter a valid email address.";
     }
+  }
 
-    let errorMsg = input.nextElementSibling;
-    if (errorMsg && errorMsg.classList.contains("error-msg")) {
-        errorMsg.remove();
-    }
+  let errorMsg = input.nextElementSibling;
+  if (errorMsg && errorMsg.classList.contains("error-msg")) {
+    errorMsg.remove();
+  }
 
-    if (!isValid) {
-        const msgEl = document.createElement("p");
-        msgEl.className = "error-msg text-red-500 text-sm mt-1";
-        msgEl.textContent = message;
-        input.insertAdjacentElement("afterend", msgEl);
-    }
+  if (!isValid) {
+    const msgEl = document.createElement("p");
+    msgEl.className = "error-msg text-red-500 text-sm mt-1";
+    msgEl.textContent = message;
+    input.insertAdjacentElement("afterend", msgEl);
+  }
 
-    return isValid;
+  return isValid;
 }
+
+/*--------------------------------------------*/
+/* Update Total Price */
+function updateTotalPrice() {
+  const total = (destinationPrice + (accommodationPrice * countOfDay)) * passengerMultiplier;
+  Total_price.textContent = total > 0 ? total + "$" : "0$";
+}
+
+
+
+
+
