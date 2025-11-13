@@ -238,7 +238,7 @@ passengerRadios.forEach(radio => {
 /* Add Passenger Button */
 addBtn.addEventListener("click", () => {
   if (passengerCount < 6) {
-    passengerCount++;
+    //passengerCount++;
     passengerMultiplier = passengerCount;
     createPassengerForm();
     updateTotalPrice();
@@ -251,33 +251,33 @@ addBtn.addEventListener("click", () => {
 /*--------------------------------------------*/
 /* Create Passenger Form */
 function createPassengerForm() {
-  passengerCount++;
   const formDiv = document.createElement("div");
   formDiv.className = "p-4 mb-4 border border-gray-700 rounded-lg bg-gray-800";
-
+  
   formDiv.innerHTML = `
-    <h4 class="text-lg font-semibold text-blue-400 mb-2">Passenger ${passengerCount}</h4>
+  <h4 class="text-lg font-semibold text-blue-400 mb-2">Passenger ${passengerCount + 1}</h4>
     <label class="block mb-2">Full Name</label>
     <input type="text" placeholder="Enter full name" class="w-full p-2 rounded bg-gray-900 border border-gray-700 mb-3">
-
+    
     <label class="block mb-2">Phone Number</label>
     <input type="number" placeholder="Enter phone number" class="w-full p-2 rounded bg-gray-900 border border-gray-700 mb-3">
-
+    
     <label class="block mb-2">Email Address</label>
     <input type="email" placeholder="Enter email" class="w-full p-2 rounded bg-gray-900 border border-gray-700 mb-3">
-
+    
     <label class="block mb-2">Additional Notes</label>
     <textarea placeholder="Any special requests?" class="w-full p-2 rounded bg-gray-900 border border-gray-700 mb-3"></textarea>
-  `;
-
-  const inputs = formDiv.querySelectorAll("input");
-  inputs.forEach(input => {
-    input.addEventListener("keyup", function () {
-      validateInput(this);
+    `;
+    
+    const inputs = formDiv.querySelectorAll("input");
+    inputs.forEach(input => {
+      input.addEventListener("keyup", function () {
+        validateInput(this);
+      });
     });
-  });
-
-  passengersContainer.appendChild(formDiv);
+    
+    passengersContainer.appendChild(formDiv);
+    passengerCount++;
 }
 
 /*--------------------------------------------*/
