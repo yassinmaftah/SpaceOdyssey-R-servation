@@ -303,16 +303,84 @@ function validateAllPassengers() {
 
 const bookbtn = document.getElementById("book-btn");
 
-
-
 bookbtn.addEventListener("click", function () {
-  const isValid = validateAllPassengers();
-
-  if (isValid) {
-    console.log("✅ All passenger forms are complete!");
-  } else {
-    alert("⚠️ Please fill in all passenger information before proceeding!");
+  if (!selectedDestinationId) {
+    alert("Please select a destination before booking!");
+    return;
   }
+
+  if (!selectedAccommodationId) {
+    alert("Please select an accommodation option!");
+    return;
+  }
+
+  if (passengerCount === 0) {
+    alert("Please add at least one passenger!");
+    return;
+  }
+
+  const dateInput = document.getElementById("departure-date");
+  if (!dateInput || !dateInput.value) {
+    alert("Please select a departure date!");
+    return;
+  }
+
+  const selectedDate = new Date(dateInput.value);
+  const now = new Date();
+  const diffTime = selectedDate - now;
+  const diffDays = diffTime / (1000 * 60 * 60 * 24);
+
+  if (diffDays < 0) {
+    alert("Departure date cannot be in the past!");
+    return;
+  }
+  if (diffDays < 30) {
+    alert("You cannot select a date less than 30 days from now!");
+    return;
+  }
+
+  const isValid = validateAllPassengers();
+  if (!isValid) {
+    alert("Please fill in all passenger information correctly!");
+    return;
+  }
+
+  const passengers = [];
+  const forms = passengersContainer.querySelectorAll("div");
+
+  forms.forEach(formDiv => {
+    const inputs = formDiv.querySelectorAll("input, textarea");
+    const passenger = {
+      fullName: inputs[0].value.trim(),
+      phone: inputs[1].value.trim(),
+      email: inputs[2].value.trim(),
+      notes: inputs[3].value.trim(),
+    };
+    passengers.push(passenger);
+  });
+
+  const destination = AllData.find(dest => dest.id === selectedDestinationId);
+  const accommodation = Accommodations_Data.find(acc => acc.id === selectedAccommodationId);
+
+  const totalPrice = (destinationPrice + (accommodationPrice * countOfDay)) * passengerMultiplier;
+
+  const bookingData = {
+    id: Date.now(),
+    user: userData.name,
+    destination: destination ? destination.name : "Unknown",
+    accommodation: accommodation ? accommodation.name : "Unknown",
+    passengers: passengers,
+    totalPrice: totalPrice + "$",
+    departureDate: dateInput.value,
+    dateCreated: new Date().toLocaleString(),
+  };
+
+  const existingBookings = JSON.parse(localStorage.getItem("spacevoyager_bookings")) || [];
+  existingBookings.push(bookingData);
+  localStorage.setItem("spacevoyager_bookings", JSON.stringify(existingBookings));
+
+  alert("Booking saved successfully!");
+  window.location.href = "myBooking.html";
 });
 
 /*--------------------------------------------*/
@@ -363,13 +431,28 @@ function validateInput(input) {
 }
 
 /*--------------------------------------------*/
-/* Update Total Price */
+/* Total Price */
 function updateTotalPrice() {
   const total = (destinationPrice + (accommodationPrice * countOfDay)) * passengerMultiplier;
   Total_price.textContent = total > 0 ? total + "$" : "0$";
 }
 
+/* disabled button booking*/
 
+const userData = JSON.parse(localStorage.getItem("spacevoyager_user"));
+
+function checkLogin() {
+  if (!userData || !userData.isLogged) {
+    bookbtn.disabled = true;
+    bookbtn.textContent = "Login to Book"; 
+    bookbtn.classList.add("opacity-50", "cursor-not-allowed"); 
+  } else {
+    bookbtn.disabled = false;
+    bookbtn.textContent = "Book Now";
+    bookbtn.classList.remove("opacity-50", "cursor-not-allowed");
+  }
+}
+checkLogin();
 
 
 
