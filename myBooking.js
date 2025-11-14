@@ -108,3 +108,102 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+
+
+
+/*get user data*/
+const loggedUser = JSON.parse(localStorage.getItem("spacevoyager_user"));
+const bookingsContainer = document.getElementById("bookings-container");
+
+/*display just booking of user login */
+if (!loggedUser) {
+  bookingsContainer.innerHTML = `
+    <div class="text-center text-red-400 text-xl font-semibold">
+      You must log in to view your bookings.
+    </div>
+  `;
+  throw new Error("User not logged in");
+}
+
+
+/* get data from localStorage*/
+
+const allBookings = JSON.parse(localStorage.getItem("spacevoyager_bookings")) || [];
+const userBookings = allBookings.filter(b => b.user === loggedUser.name);
+
+/* display tickets */
+if (userBookings.length === 0) {
+  bookingsContainer.innerHTML = `
+    <div class="col-span-full text-center text-gray-400 text-lg">
+      You don’t have any bookings yet. 🌌
+    </div>
+  `;
+} else {
+  userBookings.forEach((booking, index) => {
+    const ticket = document.createElement("div");
+    ticket.className =
+      "ticket bg-gray-800 border border-gray-700 rounded-2xl shadow-lg p-6 relative overflow-hidden";
+
+    ticket.setAttribute("data-id", booking.id);
+
+    ticket.innerHTML = `
+      <div class="absolute top-0 left-0 w-full h-1 bg-blue-500"></div>
+      <h2 class="text-2xl font-semibold text-blue-400 mb-4">${booking.destination}</h2>
+
+      <div class="space-y-2 text-sm md:text-base">
+        <p><strong>Accommodation:</strong> ${booking.accommodation}</p>
+        <p><strong>Departure Date:</strong> ${booking.departureDate}</p>
+        <p><strong>Total Price:</strong> ${booking.totalPrice}</p>
+        <p><strong>Booking Date:</strong> ${booking.dateCreated}</p>
+        <p><strong>Booked By:</strong> ${booking.user}</p>
+      </div>
+
+      <div class="mt-4">
+        <h3 class="text-blue-300 font-semibold mb-2">Passengers:</h3>
+        <ul class="list-disc list-inside text-gray-300 space-y-1">
+          ${booking.passengers.map((p, i) => `
+            <li>
+              <span class="font-semibold text-blue-400">Passenger ${i + 1}:</span> 
+              ${p.fullName} (${p.email})
+            </li>
+          `).join("")}
+        </ul>
+      </div>
+
+      <div class="mt-6 flex flex-col gap-3">
+        <button 
+          class="download-btn w-full bg-blue-600 hover:bg-blue-700 transition text-white font-semibold py-2 rounded-lg"
+          data-id="${booking.id}">
+          Download Ticket (PDF)
+        </button>
+
+        <button 
+          class="delete-btn w-full bg-red-600 hover:bg-red-700 transition text-white font-semibold py-2 rounded-lg"
+          data-id="${booking.id}">
+          Delete Booking
+        </button>
+      </div>
+    `;
+
+    bookingsContainer.appendChild(ticket);
+  });
+
+  document.querySelectorAll(".download-btn").forEach(btn => {
+    btn.addEventListener("click", function () {
+
+      const id = this.getAttribute("data-id");
+      const ticket = document.querySelector(`.ticket[data-id="${id}"]`);
+
+      ticket.classList.add("print-area");
+
+      window.print();
+
+      setTimeout(() => {
+        ticket.classList.remove("print-area");
+      }, 500);
+    });
+  });
+}
+
+/* Download tickets as pdf */
+
