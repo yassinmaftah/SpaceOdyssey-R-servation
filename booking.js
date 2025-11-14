@@ -433,7 +433,7 @@ function validateInput(input) {
 /*--------------------------------------------*/
 /* Total Price */
 function updateTotalPrice() {
-  const total = (destinationPrice + (accommodationPrice * countOfDay)) * passengerMultiplier;
+  const total = destinationPrice + (accommodationPrice * countOfDay * 2 * passengerMultiplier);
   Total_price.textContent = total > 0 ? total + "$" : "0$";
 }
 
