@@ -104,7 +104,6 @@ body {
     display: none !important;
   }
 
-  /* Focus print only on the selected ticket */
   body * {
     visibility: hidden;
   }
