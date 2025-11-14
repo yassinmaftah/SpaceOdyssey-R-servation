@@ -97,3 +97,26 @@ body {
 .mobile-menu.open {
     max-height: 600px;
 }
+
+@media print {
+  .download-btn,
+  .delete-btn {
+    display: none !important;
+  }
+
+  /* Focus print only on the selected ticket */
+  body * {
+    visibility: hidden;
+  }
+
+  .print-area, .print-area * {
+    visibility: visible;
+  }
+
+  .print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+}
